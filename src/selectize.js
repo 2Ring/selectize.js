@@ -1052,7 +1052,7 @@ $.extend(Selectize.prototype, {
 	 * @param {boolean} triggerDropdown
 	 */
 	refreshOptions: function(triggerDropdown) {
-		var i, j, k, n, groups, groups_order, option, option_html, optgroup, optgroups, html, html_children, has_create_option;
+		var i, j, k, n, groups, groups_order, option, option_html, optgroup, optgroups, html, html_children, has_create_option, has_dropdown_header;
 		var $active, $active_before, $create;
 
 		if (typeof triggerDropdown === 'undefined') {
@@ -1149,8 +1149,11 @@ $.extend(Selectize.prototype, {
 			$create = $($dropdown_content[0].childNodes[0]);
 		}
 
+		// TODO: nove
+		has_dropdown_header = self.$dropdown_header;
+
 		// activate
-		self.hasOptions = results.items.length > 0 || has_create_option;
+		self.hasOptions = results.items.length > 0 || has_create_option || has_dropdown_header;
 		if (self.hasOptions) {
 			if (results.items.length > 0) {
 				$active_before = active_before && self.getOption(active_before);
@@ -1995,6 +1998,11 @@ $.extend(Selectize.prototype, {
 			i = self.items.length;
 		} else {
 			i = Math.max(0, Math.min(self.items.length, i));
+			// TODO: dsa
+			if (self.settings.plugins.indexOf('tags_limit') !== -1) {
+				var items_length = self.$control.children(':not(input):not(.overflowed-item):not(span)').length;
+				i = Math.max(0, Math.min(items_length, i));
+			}
 		}
 
 		if(!self.isPending) {
