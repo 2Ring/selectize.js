@@ -2098,6 +2098,13 @@ $.extend(Selectize.prototype, {
 		self.$wrapper.remove();
 		self.$dropdown.remove();
 
+		// Custom plugin
+		if (self.settings.plugins.indexOf('ko_options') !== -1 && self.settings._ko_subscriptions && self.settings._ko_subscriptions.length > 0) {
+			self.settings._ko_subscriptions.array.forEach(function (subscription) {
+				subscription.dispose();
+			});
+		}
+
 		self.$input
 			.html('')
 			.append(revertSettings.$children)

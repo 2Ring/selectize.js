@@ -3225,6 +3225,13 @@
 			self.$wrapper.remove();
 			self.$dropdown.remove();
 	
+			// Custom plugin
+			if (self.settings.plugins.indexOf('ko_options') !== -1 && self.settings._ko_subscriptions && self.settings._ko_subscriptions.length > 0) {
+				self.settings._ko_subscriptions.array.forEach(function (subscription) {
+					subscription.dispose();
+				});
+			}
+	
 			self.$input
 				.html('')
 				.append(revertSettings.$children)
@@ -3764,16 +3771,54 @@
 	            original.apply(self, arguments);
 	
 	            if (self.settings.ko_options) {
+	                if(!self.settings._ko_subscriptions) {
+	                    self.settings._ko_subscriptions = [];
+	                }
 	                self.settings.ko_options().forEach(function (item) {
 	                    self.registerOption(item);
 	                });
+	
+	                self.settings._ko_subscriptions.push(self.settings.ko_options.subscribe(function (newValue) {
+	                    var mappedNewValue = {}
+	
+	                    newValue.forEach( function (item) {
+	                        mappedNewValue[item.id] = item;
+	                        if(!self.options[item.id]) {
+	                            self.addOption(item);
+	                        }
+	                    })
+	                    
+	                    var itemForRemove = [];
+	
+	                    for (var key in self.options) {
+	                        if (!mappedNewValue[key]) {
+	                            itemForRemove.push(key);
+	                        }
+	                    }
+	
+	                    itemForRemove.forEach(function (item) {
+	                        self.removeOption(item, true);
+	                    })
+	
+	                    self.addOption(newValue);
+	                }.bind(self), null, 'change'));
 	            }
 	
 	            // build optgroup table
 	            if (self.settings.ko_optgroups) {
-	                self.settings.ko_optgroups().forEach(function (item) {
+	                if (!self.settings._ko_subscriptions) {
+	                    self.settings._ko_subscriptions = [];
+	                }
+	                self.settings._ko_subscriptions.push(self.settings.ko_optgroups().forEach(function (item) {
 	                    self.registerOptionGroup(item);
+	                }));
+	
+	                self.settings.ko_optgroups.subscribe(function (newValue) {
+	                    newValue.forEach(function (item) {
+	                        self.registerOptionGroup(item);
+	                    });
 	                });
+	
 	            }
 	        };
 	    })();
