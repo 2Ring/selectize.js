@@ -3067,8 +3067,7 @@
 	        headerClass: 'selectize-dropdown-header',
 	        html: function (data) {
 	            return (
-	                '<div class="' + data.headerClass + '">' +
-	                '</div>'
+	                '<div class="' + data.headerClass + '"></div>'
 	            );
 	        }
 	    }, options);
@@ -3117,6 +3116,29 @@
 	                this.$dropdown_header[0].appendChild(headerItem);
 	                this.header_items.set(value, headerItem);
 	            });
+	        };
+	    })();
+	});
+	
+	Selectize.define('ko_options', function (options) {
+	    var self = this;
+	    self.setup = (function () {
+	        var original = self.setup;
+	        return function () {
+	            original.apply(self, arguments);
+	
+	            if (self.settings.ko_options) {
+	                self.settings.ko_options().forEach(function (item) {
+	                    self.registerOption(item);
+	                });
+	            }
+	
+	            // build optgroup table
+	            if (self.settings.ko_optgroups) {
+	                self.settings.ko_optgroups().forEach(function (item) {
+	                    self.registerOptionGroup(item);
+	                });
+	            }
 	        };
 	    })();
 	});
@@ -3378,17 +3400,18 @@
 	        var original = self.onChange;
 	        return function (e) {
 	            var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
+	            var controlInput = this.$control.children('input')[0];
 	            var actualWidth = 0;
 	            array.forEach(function(item) {
 	                item.classList.remove("overflowed-item");
 	                item.style.display = 'inline-block';
 	                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
-	                if (actualWidth > item.parentElement.clientWidth - 8 - 15) {
+	                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16) {
 	                    item.classList.add("overflowed-item");
 	                    item.style.display = 'none';
 	                }
 	            });
-	            if (actualWidth > this.$control[0].clientWidth - 8 - 15) {
+	            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16) {
 	                this.overflow_indicator.style.display = 'inline-block';
 	
 	            } else {

@@ -5,8 +5,7 @@ Selectize.define('header_items', function (options) {
         headerClass: 'selectize-dropdown-header',
         html: function (data) {
             return (
-                '<div class="' + data.headerClass + '">' +
-                '</div>'
+                '<div class="' + data.headerClass + '"></div>'
             );
         }
     }, options);

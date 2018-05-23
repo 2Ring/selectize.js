@@ -23,17 +23,18 @@ Selectize.define('tags_limit', function (options) {
         var original = self.onChange;
         return function (e) {
             var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
+            var controlInput = this.$control.children('input')[0];
             var actualWidth = 0;
             array.forEach(function(item) {
                 item.classList.remove("overflowed-item");
                 item.style.display = 'inline-block';
                 actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
-                if (actualWidth > item.parentElement.clientWidth - 8 - 15) {
+                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16) {
                     item.classList.add("overflowed-item");
                     item.style.display = 'none';
                 }
             });
-            if (actualWidth > this.$control[0].clientWidth - 8 - 15) {
+            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16) {
                 this.overflow_indicator.style.display = 'inline-block';
 
             } else {
