@@ -22,22 +22,19 @@ Selectize.define('tags_limit', function (options) {
     this.onChange = (function () {
         var original = self.onChange;
         return function (e) {
-            var array = Array.prototype.slice.call(this.$control[0].children);
+            var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
             var actualWidth = 0;
             array.forEach(function(item) {
                 item.classList.remove("overflowed-item");
-                item.style.display = 'inline';
-                if (item.className === 'item' || item.className === 'item active') {
-                    actualWidth += item.offsetWidth;
-                }
-                if (actualWidth > item.parentElement.offsetWidth - 35) {
-                    length += 1;
+                item.style.display = 'inline-block';
+                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
+                if (actualWidth > item.parentElement.clientWidth - 8 - 15) {
                     item.classList.add("overflowed-item");
                     item.style.display = 'none';
                 }
             });
-            if (actualWidth > this.$control[0].offsetWidth - 35) {
-                this.overflow_indicator.style.display = 'inline';
+            if (actualWidth > this.$control[0].clientWidth - 8 - 15) {
+                this.overflow_indicator.style.display = 'inline-block';
 
             } else {
                 this.overflow_indicator.style.display = 'none';

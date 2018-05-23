@@ -1640,8 +1640,12 @@
 				$create = $($dropdown_content[0].childNodes[0]);
 			}
 	
-			// TODO: nove
-			has_dropdown_header = self.$dropdown_header;
+			// Custom plugin
+			if (self.settings.plugins.indexOf('header_items') !== -1) {
+				has_dropdown_header = self.$dropdown_header;
+			} else {
+				has_dropdown_header = false;
+			}
 	
 			// activate
 			self.hasOptions = results.items.length > 0 || has_create_option || has_dropdown_header;
@@ -2297,11 +2301,23 @@
 			var offset = this.settings.dropdownParent === 'body' ? $control.offset() : $control.position();
 			offset.top += $control.outerHeight(true);
 	
-			this.$dropdown.css({
-				width : $control[0].getBoundingClientRect().width,
-				top   : offset.top,
-				left  : offset.left
-			});
+	        var position = {
+	            width: $control[0].getBoundingClientRect().width,
+	            top: offset.top,
+	        }
+	
+			// Custom plugin 
+			if(this.settings.plugins.indexOf('custom_width') !== -1) {
+				if (this.settings.dropdown_direction && this.settings.dropdown_direction === 'rtl') {
+					position.right = 0;
+				} else {
+		            position.left = offset.left;
+				}
+			} else {
+	            position.left = offset.left;
+			}
+	
+	        this.$dropdown.css(position);
 		},
 	
 		/**
@@ -2489,7 +2505,8 @@
 				i = self.items.length;
 			} else {
 				i = Math.max(0, Math.min(self.items.length, i));
-				// TODO: dsa
+	
+				// Custom plugin
 				if (self.settings.plugins.indexOf('tags_limit') !== -1) {
 					var items_length = self.$control.children(':not(input):not(.overflowed-item):not(span)').length;
 					i = Math.max(0, Math.min(items_length, i));
@@ -3043,7 +3060,6 @@
 	
 	});
 	
-	
 	Selectize.define('header_items', function (options) {
 	    var self = this;
 	    
@@ -3065,11 +3081,12 @@
 	
 	            self.$dropdown_header = $(options.html(options));
 	            self.$dropdown.prepend(self.$dropdown_header);
-	         
+	
 	            self.on('item_remove', function (value) {
 	               if(this.header_items.has(value)) {
 	                   this.$dropdown_header[0].removeChild(this.header_items.get(value));
 	                   this.header_items.delete(value);
+	                   this.ignoreHover = true;
 	                   this.refreshItems();
 	                   this.refreshOptions();
 	               }
@@ -3078,14 +3095,19 @@
 	            self.on('item_add', function (value, item) {
 	                var headerItem = document.createElement('div');
 	                var removeButton = document.createElement('a');
+	                var actualItem = this.options[value];
+	               
 	                removeButton.classList.add('remove');
 	                removeButton.setAttribute('data-value', value);
 	                removeButton.innerText = '×';
 	                removeButton.addEventListener("click", function (e) {
 	                    this.removeItem(e.currentTarget.attributes.getNamedItem('data-value').value, false);
 	                }.bind(this));
-	
-	                headerItem.innerText = value;
+	                if (actualItem) {
+	                    headerItem.innerText = actualItem.name ? actualItem.name : value;
+	                } else {
+	                    headerItem.innerText = value;
+	                }
 	                headerItem.appendChild(removeButton);
 	                headerItem.classList.add('item');
 	                headerItem.classList.add('selected-item');
@@ -3355,22 +3377,19 @@
 	    this.onChange = (function () {
 	        var original = self.onChange;
 	        return function (e) {
-	            var array = Array.prototype.slice.call(this.$control[0].children);
+	            var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
 	            var actualWidth = 0;
 	            array.forEach(function(item) {
 	                item.classList.remove("overflowed-item");
-	                item.style.display = 'inline';
-	                if (item.className === 'item' || item.className === 'item active') {
-	                    actualWidth += item.offsetWidth;
-	                }
-	                if (actualWidth > item.parentElement.offsetWidth - 35) {
-	                    length += 1;
+	                item.style.display = 'inline-block';
+	                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
+	                if (actualWidth > item.parentElement.clientWidth - 8 - 15) {
 	                    item.classList.add("overflowed-item");
 	                    item.style.display = 'none';
 	                }
 	            });
-	            if (actualWidth > this.$control[0].offsetWidth - 35) {
-	                this.overflow_indicator.style.display = 'inline';
+	            if (actualWidth > this.$control[0].clientWidth - 8 - 15) {
+	                this.overflow_indicator.style.display = 'inline-block';
 	
 	            } else {
 	                this.overflow_indicator.style.display = 'none';

@@ -1149,8 +1149,12 @@ $.extend(Selectize.prototype, {
 			$create = $($dropdown_content[0].childNodes[0]);
 		}
 
-		// TODO: nove
-		has_dropdown_header = self.$dropdown_header;
+		// Custom plugin
+		if (self.settings.plugins.indexOf('header_items') !== -1) {
+			has_dropdown_header = self.$dropdown_header;
+		} else {
+			has_dropdown_header = false;
+		}
 
 		// activate
 		self.hasOptions = results.items.length > 0 || has_create_option || has_dropdown_header;
@@ -1806,11 +1810,23 @@ $.extend(Selectize.prototype, {
 		var offset = this.settings.dropdownParent === 'body' ? $control.offset() : $control.position();
 		offset.top += $control.outerHeight(true);
 
-		this.$dropdown.css({
-			width : $control[0].getBoundingClientRect().width,
-			top   : offset.top,
-			left  : offset.left
-		});
+        var position = {
+            width: $control[0].getBoundingClientRect().width,
+            top: offset.top,
+        }
+
+		// Custom plugin 
+		if(this.settings.plugins.indexOf('custom_width') !== -1) {
+			if (this.settings.dropdown_direction && this.settings.dropdown_direction === 'rtl') {
+				position.right = 0;
+			} else {
+	            position.left = offset.left;
+			}
+		} else {
+            position.left = offset.left;
+		}
+
+        this.$dropdown.css(position);
 	},
 
 	/**
@@ -1998,7 +2014,8 @@ $.extend(Selectize.prototype, {
 			i = self.items.length;
 		} else {
 			i = Math.max(0, Math.min(self.items.length, i));
-			// TODO: dsa
+
+			// Custom plugin
 			if (self.settings.plugins.indexOf('tags_limit') !== -1) {
 				var items_length = self.$control.children(':not(input):not(.overflowed-item):not(span)').length;
 				i = Math.max(0, Math.min(items_length, i));
