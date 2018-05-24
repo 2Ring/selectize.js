@@ -35,7 +35,6 @@ Selectize.define('ko_options', function (options) {
                         self.removeOption(item, true);
                     })
 
-                    self.addOption(newValue);
                 }.bind(self), null, 'change'));
             }
 
