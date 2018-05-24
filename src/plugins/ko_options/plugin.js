@@ -6,14 +6,14 @@ Selectize.define('ko_options', function (options) {
             original.apply(self, arguments);
 
             if (self.settings.ko_options) {
-                if(!self.settings._ko_subscriptions) {
-                    self.settings._ko_subscriptions = [];
+                if (!self.settings.ko_subscriptions) {
+                    self.settings.ko_subscriptions = [];
                 }
                 self.settings.ko_options().forEach(function (item) {
                     self.registerOption(item);
                 });
 
-                self.settings._ko_subscriptions.push(self.settings.ko_options.subscribe(function (newValue) {
+                self.settings.ko_subscriptions.push(self.settings.ko_options.subscribe(function (newValue) {
                     var mappedNewValue = {}
 
                     newValue.forEach( function (item) {
@@ -41,10 +41,10 @@ Selectize.define('ko_options', function (options) {
 
             // build optgroup table
             if (self.settings.ko_optgroups) {
-                if (!self.settings._ko_subscriptions) {
-                    self.settings._ko_subscriptions = [];
+                if (!self.settings.ko_subscriptions) {
+                    self.settings.ko_subscriptions = [];
                 }
-                self.settings._ko_subscriptions.push(self.settings.ko_optgroups().forEach(function (item) {
+                self.settings.ko_subscriptions.push(self.settings.ko_optgroups().forEach(function (item) {
                     self.registerOptionGroup(item);
                 }));
 
