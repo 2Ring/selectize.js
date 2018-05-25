@@ -25,16 +25,18 @@ Selectize.define('tags_limit', function (options) {
             var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
             var controlInput = this.$control.children('input')[0];
             var actualWidth = 0;
+            var isOutOfLine = false;
             array.forEach(function(item) {
                 item.classList.remove("overflowed-item");
                 item.style.display = 'inline-block';
                 actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
-                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16) {
+                isOutOfLine = item.offsetTop > 10;
+                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16 || isOutOfLine) {
                     item.classList.add("overflowed-item");
                     item.style.display = 'none';
                 }
             });
-            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16) {
+            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16 || isOutOfLine) {
                 this.overflow_indicator.style.display = 'inline-block';
 
             } else {

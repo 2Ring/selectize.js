@@ -2589,13 +2589,6 @@
 			self.$wrapper.remove();
 			self.$dropdown.remove();
 	
-			// Custom plugin
-			if (self.settings.plugins.indexOf('ko_options') !== -1 && self.settings._ko_subscriptions && self.settings._ko_subscriptions.length > 0) {
-				self.settings._ko_subscriptions.array.forEach(function (subscription) {
-					subscription.dispose();
-				});
-			}
-	
 			self.$input
 				.html('')
 				.append(revertSettings.$children)
@@ -3135,14 +3128,14 @@
 	            original.apply(self, arguments);
 	
 	            if (self.settings.ko_options) {
-	                if(!self.settings._ko_subscriptions) {
-	                    self.settings._ko_subscriptions = [];
+	                if (!self.settings.ko_subscriptions) {
+	                    self.settings.ko_subscriptions = [];
 	                }
 	                self.settings.ko_options().forEach(function (item) {
 	                    self.registerOption(item);
 	                });
 	
-	                self.settings._ko_subscriptions.push(self.settings.ko_options.subscribe(function (newValue) {
+	                self.settings.ko_subscriptions.push(self.settings.ko_options.subscribe(function (newValue) {
 	                    var mappedNewValue = {}
 	
 	                    newValue.forEach( function (item) {
@@ -3164,16 +3157,15 @@
 	                        self.removeOption(item, true);
 	                    })
 	
-	                    self.addOption(newValue);
 	                }.bind(self), null, 'change'));
 	            }
 	
 	            // build optgroup table
 	            if (self.settings.ko_optgroups) {
-	                if (!self.settings._ko_subscriptions) {
-	                    self.settings._ko_subscriptions = [];
+	                if (!self.settings.ko_subscriptions) {
+	                    self.settings.ko_subscriptions = [];
 	                }
-	                self.settings._ko_subscriptions.push(self.settings.ko_optgroups().forEach(function (item) {
+	                self.settings.ko_subscriptions.push(self.settings.ko_optgroups().forEach(function (item) {
 	                    self.registerOptionGroup(item);
 	                }));
 	
@@ -3447,17 +3439,19 @@
 	            var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
 	            var controlInput = this.$control.children('input')[0];
 	            var actualWidth = 0;
+	            var isOutOfLine = false;
 	            array.forEach(function(item) {
 	                item.classList.remove("overflowed-item");
-	                item.style.display = 'inline-block';
+	                item.style.display = 'inline-flex';
 	                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
-	                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16) {
+	                isOutOfLine = item.offsetTop > 10;
+	                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16 || isOutOfLine) {
 	                    item.classList.add("overflowed-item");
 	                    item.style.display = 'none';
 	                }
 	            });
-	            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16) {
-	                this.overflow_indicator.style.display = 'inline-block';
+	            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16 || isOutOfLine) {
+	                this.overflow_indicator.style.display = 'inline-flex';
 	
 	            } else {
 	                this.overflow_indicator.style.display = 'none';
