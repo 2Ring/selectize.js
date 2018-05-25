@@ -1,4 +1,4 @@
-Selectize.define('tags_limit', function (options) {
+Selectize.define('tags_overflow', function (options) {
     var self = this;
     self.setup = (function () {
         var original = self.setup;
@@ -42,8 +42,8 @@ Selectize.define('tags_limit', function (options) {
             } else {
                 this.overflow_indicator.style.display = 'none';
             }
+
             return original.apply(this, arguments);
         };
     })();
-
 });

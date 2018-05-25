@@ -10,6 +10,29 @@ Selectize.define('header_items', function (options) {
         }
     }, options);
 
+    this.onChange = (function () {
+        var original = self.onChange;
+        return function (e) {
+            if (this.items.length === 0) {
+                this.$dropdown_header[0].style.display = 'none';
+                this.$dropdown_header[0].classList.add('no-items');
+            } else {
+                this.$dropdown_header[0].style.display = 'block';
+                this.$dropdown_header[0].classList.remove('no-items');
+            }
+
+            if (this.items.length >= this.settings.max_item_limit) {
+                this.$dropdown_content[0].style.display = 'none';
+                this.$dropdown_content[0].classList.add('no-items');
+            } else {
+                this.$dropdown_content[0].style.display = 'block';
+                this.$dropdown_content[0].classList.remove('no-items');
+            }
+
+            return original.apply(this, arguments);
+        };
+    })();
+
     self.setup = (function () {
         var original = self.setup;
         self.header_items = new Map();

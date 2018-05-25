@@ -3708,6 +3708,29 @@
 	        }
 	    }, options);
 	
+	    this.onChange = (function () {
+	        var original = self.onChange;
+	        return function (e) {
+	            if (this.items.length === 0) {
+	                this.$dropdown_header[0].style.display = 'none';
+	                this.$dropdown_header[0].classList.add('no-items');
+	            } else {
+	                this.$dropdown_header[0].style.display = 'block';
+	                this.$dropdown_header[0].classList.remove('no-items');
+	            }
+	
+	            if (this.items.length >= this.settings.max_item_limit) {
+	                this.$dropdown_content[0].style.display = 'none';
+	                this.$dropdown_content[0].classList.add('no-items');
+	            } else {
+	                this.$dropdown_content[0].style.display = 'block';
+	                this.$dropdown_content[0].classList.remove('no-items');
+	            }
+	
+	            return original.apply(this, arguments);
+	        };
+	    })();
+	
 	    self.setup = (function () {
 	        var original = self.setup;
 	        self.header_items = new Map();
@@ -4048,7 +4071,7 @@
 	});
 	
 	
-	Selectize.define('tags_limit', function (options) {
+	Selectize.define('tags_overflow', function (options) {
 	    var self = this;
 	    self.setup = (function () {
 	        var original = self.setup;
@@ -4078,7 +4101,7 @@
 	            var isOutOfLine = false;
 	            array.forEach(function(item) {
 	                item.classList.remove("overflowed-item");
-	                item.style.display = 'inline-flex';
+	                item.style.display = 'inline-block';
 	                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
 	                isOutOfLine = item.offsetTop > 10;
 	                if (actualWidth > item.parentElement.clientWidth - controlInput.offsetWidth - 16 || isOutOfLine) {
@@ -4087,15 +4110,15 @@
 	                }
 	            });
 	            if (actualWidth > this.$control[0].clientWidth - controlInput.clientWidth - 16 || isOutOfLine) {
-	                this.overflow_indicator.style.display = 'inline-flex';
+	                this.overflow_indicator.style.display = 'inline-block';
 	
 	            } else {
 	                this.overflow_indicator.style.display = 'none';
 	            }
+	
 	            return original.apply(this, arguments);
 	        };
 	    })();
-	
 	});
 	
 
