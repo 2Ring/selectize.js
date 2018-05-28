@@ -3720,9 +3720,11 @@
 	            }
 	
 	            if (this.items.length >= this.settings.max_item_limit) {
+	                this.$control_input[0].setAttribute('disabled', '');
 	                this.$dropdown_content[0].style.display = 'none';
 	                this.$dropdown_content[0].classList.add('no-items');
 	            } else {
+	                this.$control_input[0].removeAttribute('disabled');
 	                this.$dropdown_content[0].style.display = 'block';
 	                this.$dropdown_content[0].classList.remove('no-items');
 	            }
