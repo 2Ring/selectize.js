@@ -13,6 +13,7 @@ Selectize.define('header_items', function (options) {
     this.onChange = (function () {
         var original = self.onChange;
         return function (e) {
+
             if (this.items.length === 0) {
                 this.$dropdown_header[0].style.display = 'none';
                 this.$dropdown_header[0].classList.add('no-items');
@@ -23,12 +24,12 @@ Selectize.define('header_items', function (options) {
 
             if (this.items.length >= this.settings.max_item_limit) {
                 this.$control_input[0].setAttribute('disabled', '');
-                this.$dropdown_content[0].style.display = 'none';
-                this.$dropdown_content[0].classList.add('no-items');
+                this.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'none';
+                this.$dropdown.find('.selectize-dropdown-content')[0].classList.add('no-items');
             } else {
                 this.$control_input[0].removeAttribute('disabled');
-                this.$dropdown_content[0].style.display = 'block';
-                this.$dropdown_content[0].classList.remove('no-items');
+                this.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'block';
+                this.$dropdown.find('.selectize-dropdown-content')[0].classList.remove('no-items');
             }
 
             return original.apply(this, arguments);
@@ -40,9 +41,20 @@ Selectize.define('header_items', function (options) {
         self.header_items = new Map();
         return function () {
             original.apply(self, arguments);
-
+           
             self.$dropdown_header = $(options.html(options));
             self.$dropdown.prepend(self.$dropdown_header);
+
+            if (self.items.length === 0) {
+                self.$dropdown_header[0].style.display = 'none';
+                self.$dropdown_header[0].classList.add('no-items');
+            }
+
+            if (self.items.length >= this.settings.max_item_limit) {
+                self.$control_input[0].setAttribute('disabled', '');
+                self.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'none';
+                self.$dropdown.find('.selectize-dropdown-content')[0].classList.add('no-items');
+            }
 
             self.on('item_remove', function (value) {
                if(this.header_items.has(value)) {

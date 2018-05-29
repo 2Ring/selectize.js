@@ -885,17 +885,24 @@ $.extend(Selectize.prototype, {
 
 		if (scroll || !isset(scroll)) {
 
-			height_menu   = self.$dropdown_content.height();
-			height_item   = self.$activeOption.outerHeight(true);
-			scroll        = self.$dropdown_content.scrollTop() || 0;
-			y             = self.$activeOption.offset().top - self.$dropdown_content.offset().top + scroll;
-			scroll_top    = y;
+			var scrollingElement = self.$dropdown_content;
+			var nativeScrollBarHeight = 0;
+			if (self.settings.plugins.indexOf('simple-bar') !== -1 && SimpleBar) {
+				scrollingElement = $(self.$dropdown_content[0].parentElement);
+				nativeScrollBarHeight = parseInt(scrollingElement.css('marginBottom'));
+			}
+
+			height_menu = scrollingElement.height() + nativeScrollBarHeight;
+			height_item = self.$activeOption.outerHeight(true);
+			scroll = scrollingElement.scrollTop() || 0;
+			y = self.$activeOption.offset().top - scrollingElement.offset().top + scroll;
+			scroll_top = y;
 			scroll_bottom = y - height_menu + height_item;
 
 			if (y + height_item > height_menu + scroll) {
-				self.$dropdown_content.stop().animate({scrollTop: scroll_bottom}, animate ? self.settings.scrollDuration : 0);
+				scrollingElement.stop().animate({scrollTop: scroll_bottom}, animate ? self.settings.scrollDuration : 0);
 			} else if (y < scroll) {
-				self.$dropdown_content.stop().animate({scrollTop: scroll_top}, animate ? self.settings.scrollDuration : 0);
+				scrollingElement.stop().animate({scrollTop: scroll_top}, animate ? self.settings.scrollDuration : 0);
 			}
 
 		}

@@ -1376,17 +1376,24 @@
 	
 			if (scroll || !isset(scroll)) {
 	
-				height_menu   = self.$dropdown_content.height();
-				height_item   = self.$activeOption.outerHeight(true);
-				scroll        = self.$dropdown_content.scrollTop() || 0;
-				y             = self.$activeOption.offset().top - self.$dropdown_content.offset().top + scroll;
-				scroll_top    = y;
+				var scrollingElement = self.$dropdown_content;
+				var nativeScrollBarHeight = 0;
+				if (self.settings.plugins.indexOf('simple-bar') !== -1 && SimpleBar) {
+					scrollingElement = $(self.$dropdown_content[0].parentElement);
+					nativeScrollBarHeight = parseInt(scrollingElement.css('marginBottom'));
+				}
+	
+				height_menu = scrollingElement.height() + nativeScrollBarHeight;
+				height_item = self.$activeOption.outerHeight(true);
+				scroll = scrollingElement.scrollTop() || 0;
+				y = self.$activeOption.offset().top - scrollingElement.offset().top + scroll;
+				scroll_top = y;
 				scroll_bottom = y - height_menu + height_item;
 	
 				if (y + height_item > height_menu + scroll) {
-					self.$dropdown_content.stop().animate({scrollTop: scroll_bottom}, animate ? self.settings.scrollDuration : 0);
+					scrollingElement.stop().animate({scrollTop: scroll_bottom}, animate ? self.settings.scrollDuration : 0);
 				} else if (y < scroll) {
-					self.$dropdown_content.stop().animate({scrollTop: scroll_top}, animate ? self.settings.scrollDuration : 0);
+					scrollingElement.stop().animate({scrollTop: scroll_top}, animate ? self.settings.scrollDuration : 0);
 				}
 	
 			}
@@ -3075,6 +3082,7 @@
 	    this.onChange = (function () {
 	        var original = self.onChange;
 	        return function (e) {
+	
 	            if (this.items.length === 0) {
 	                this.$dropdown_header[0].style.display = 'none';
 	                this.$dropdown_header[0].classList.add('no-items');
@@ -3085,12 +3093,12 @@
 	
 	            if (this.items.length >= this.settings.max_item_limit) {
 	                this.$control_input[0].setAttribute('disabled', '');
-	                this.$dropdown_content[0].style.display = 'none';
-	                this.$dropdown_content[0].classList.add('no-items');
+	                this.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'none';
+	                this.$dropdown.find('.selectize-dropdown-content')[0].classList.add('no-items');
 	            } else {
 	                this.$control_input[0].removeAttribute('disabled');
-	                this.$dropdown_content[0].style.display = 'block';
-	                this.$dropdown_content[0].classList.remove('no-items');
+	                this.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'block';
+	                this.$dropdown.find('.selectize-dropdown-content')[0].classList.remove('no-items');
 	            }
 	
 	            return original.apply(this, arguments);
@@ -3102,9 +3110,20 @@
 	        self.header_items = new Map();
 	        return function () {
 	            original.apply(self, arguments);
-	
+	           
 	            self.$dropdown_header = $(options.html(options));
 	            self.$dropdown.prepend(self.$dropdown_header);
+	
+	            if (self.items.length === 0) {
+	                self.$dropdown_header[0].style.display = 'none';
+	                self.$dropdown_header[0].classList.add('no-items');
+	            }
+	
+	            if (self.items.length >= this.settings.max_item_limit) {
+	                self.$control_input[0].setAttribute('disabled', '');
+	                self.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'none';
+	                self.$dropdown.find('.selectize-dropdown-content')[0].classList.add('no-items');
+	            }
 	
 	            self.on('item_remove', function (value) {
 	               if(this.header_items.has(value)) {
@@ -3436,6 +3455,25 @@
 		})();
 	});
 	
+	
+	Selectize.define('simple-bar', function (options) {
+	    var self = this;
+	
+	    self.setup = (function () {
+	        var original = self.setup;
+	        self.header_items = new Map();
+	        return function () {
+	            original.apply(self, arguments);
+	
+	            if(SimpleBar) {
+	                new SimpleBar(self.$dropdown_content[0]);
+	                self.$dropdown_content_original = self.$dropdown_content;
+	                self.$dropdown_content = self.$dropdown_content.find('div.simplebar-content');
+	
+	            }
+	        };
+	    })();
+	});
 	
 	Selectize.define('tags_overflow', function (options) {
 	    var self = this;
