@@ -4137,6 +4137,7 @@
 	        return function (e) {
 	            var array = Array.prototype.slice.call(this.$control.children(':not(input):not(span)'));
 	            var controlInput = this.$control.children('input')[0];
+	            var controlInputWidth = controlInput ? controlInput.clientWidth : 0;
 	            var actualWidth = 0;
 	            var isOutOfLine = false;
 	            array.forEach(function (item) {
@@ -4144,12 +4145,12 @@
 	                item.style.display = 'inline-block';
 	                actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
 	                isOutOfLine = item.offsetTop > 10;
-	                if (actualWidth + controlInput.clientWidth + 16 >= item.parentElement.clientWidth || isOutOfLine) {
+	                if (actualWidth + controlInputWidth + 16 >= item.parentElement.clientWidth || isOutOfLine) {
 	                    item.classList.add("overflowed-item");
 	                    item.style.display = 'none';
 	                }
 	            });
-	            if (actualWidth + controlInput.clientWidth + 16 > this.$control[0].clientWidth || isOutOfLine) {
+	            if (actualWidth + controlInputWidth + 16 > this.$control[0].clientWidth || isOutOfLine) {
 	                this.overflow_indicator.style.display = 'inline-block';
 	
 	            } else {
