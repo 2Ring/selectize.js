@@ -62,7 +62,7 @@ Selectize.define('header_items', function (options) {
                    this.header_items.delete(value);
                    this.ignoreHover = true;
                    this.refreshItems();
-                   this.refreshOptions();
+                   this.refreshOptions(false);
                }
             });
 
@@ -70,7 +70,7 @@ Selectize.define('header_items', function (options) {
                 var headerItem = document.createElement('div');
                 var removeButton = document.createElement('a');
                 var actualItem = this.options[value];
-               
+
                 removeButton.classList.add('remove');
                 removeButton.setAttribute('data-value', value);
                 removeButton.innerText = '×';
@@ -90,6 +90,15 @@ Selectize.define('header_items', function (options) {
 
                 this.$dropdown_header[0].appendChild(headerItem);
                 this.header_items.set(value, headerItem);
+            });
+
+            self.on('clear', function () {
+                this.header_items.clear();
+                while (this.$dropdown_header[0].firstChild) {
+                    this.$dropdown_header[0].removeChild(this.$dropdown_header[0].firstChild);
+                }
+                this.refreshItems();
+                this.refreshOptions(false);
             });
         };
     })();
