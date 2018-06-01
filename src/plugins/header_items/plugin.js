@@ -86,6 +86,9 @@ Selectize.define('header_items', function (options) {
                 headerItem.classList.add('item');
                 headerItem.classList.add('selected-item');
                 headerItem.setAttribute('data-selectable','');
+                if(self.settings.item_max_width) {
+                    headerItem.style.maxWidth = self.settings.item_max_width;
+                }
 
 
                 this.$dropdown_header[0].appendChild(headerItem);

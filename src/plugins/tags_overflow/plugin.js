@@ -27,17 +27,19 @@ Selectize.define('tags_overflow', function (options) {
             var controlInputWidth = controlInput ? controlInput.clientWidth : 0;
             var actualWidth = 0;
             var isOutOfLine = false;
+            var showOverflowIndicator = false;
             array.forEach(function (item) {
                 item.classList.remove("overflowed-item");
                 item.style.display = 'inline-block';
                 actualWidth += Math.abs(actualWidth - (item.offsetWidth + item.offsetLeft));
                 isOutOfLine = item.offsetTop > 10;
-                if (actualWidth + controlInputWidth + 16 >= item.parentElement.clientWidth || isOutOfLine) {
+                if (actualWidth + controlInputWidth + 21 >= item.parentElement.clientWidth || isOutOfLine) {
                     item.classList.add("overflowed-item");
                     item.style.display = 'none';
+                    showOverflowIndicator = true;
                 }
             });
-            if (actualWidth + controlInputWidth + 16 > this.$control[0].clientWidth || isOutOfLine) {
+            if (showOverflowIndicator || isOutOfLine) {
                 this.overflow_indicator.style.display = 'inline-block';
 
             } else {
