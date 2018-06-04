@@ -3728,7 +3728,7 @@
 	                this.$dropdown_header[0].classList.remove('no-items');
 	            }
 	
-	            if (this.items.length >= this.settings.max_item_limit) {
+	            if (this.items.length >= this.settings.max_item_limit || this.items.length >= Object.keys(this.options).length) {
 	                this.$control_input[0].setAttribute('disabled', '');
 	                this.$dropdown.find('.selectize-dropdown-content')[0].style.display = 'none';
 	                this.$dropdown.find('.selectize-dropdown-content')[0].classList.add('no-items');
