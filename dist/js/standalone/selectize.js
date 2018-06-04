@@ -4115,7 +4115,7 @@
 	            original.apply(self, arguments);
 	
 	            if(SimpleBar) {
-	                new SimpleBar(self.$dropdown_content[0]);
+	                new SimpleBar(self.$dropdown_content[0], { autoHide: false });
 	                self.$dropdown_content_original = self.$dropdown_content;
 	                self.$dropdown_content = self.$dropdown_content.find('div.simplebar-content');
 	
