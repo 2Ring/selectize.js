@@ -830,7 +830,8 @@
 				'type'            : 'onType',
 				'load'            : 'onLoad',
 				'focus'           : 'onFocus',
-				'blur'            : 'onBlur'
+				'blur'            : 'onBlur',
+				'on_escape'       : 'on_escape'
 			};
 	
 			for (key in callbacks) {
@@ -3067,6 +3068,21 @@
 		})();
 	
 	});
+	
+	Selectize.define('escape_pressed', function(options) {
+		var self = this;
+	
+		this.onKeyDown = (function() {
+			var original = self.onKeyDown;
+			return function(e) {
+				if (e.keyCode === KEY_ESC) {
+					self.trigger('on_escape');
+				}
+				return original.apply(this, arguments);
+			};
+		})();
+	});
+	
 	
 	Selectize.define('header_items', function (options) {
 	    var self = this;
