@@ -339,7 +339,8 @@ $.extend(Selectize.prototype, {
 			'type'            : 'onType',
 			'load'            : 'onLoad',
 			'focus'           : 'onFocus',
-			'blur'            : 'onBlur'
+			'blur'            : 'onBlur',
+			'on_escape'       : 'on_escape'
 		};
 
 		for (key in callbacks) {
