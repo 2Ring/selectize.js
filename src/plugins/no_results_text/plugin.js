@@ -18,7 +18,7 @@ Selectize.define('no_results_text', function (options) {
 
         var query = $.trim(value);
         var results = self.search(query);
-        if (results.items.length || (self.$dropdown_header.children().length && query == '')) {
+        if (results.items.length || (self.$dropdown_header && self.$dropdown_header.children().length && query == '')) {
             self.$dropdown_no_results.css('display', 'none');
         } else {
             self.$dropdown_no_results.css('display', 'block');
