@@ -3274,7 +3274,7 @@
 	
 	        var query = $.trim(value);
 	        var results = self.search(query);
-	        if (results.items.length || (self.$dropdown_header.children().length && query == '')) {
+	        if (results.items.length || (self.$dropdown_header && self.$dropdown_header.children().length && query == '')) {
 	            self.$dropdown_no_results.css('display', 'none');
 	        } else {
 	            self.$dropdown_no_results.css('display', 'block');
@@ -3324,6 +3324,7 @@
 	    self.onSearchChange = overridenOnSearchChange;
 	    self.open = overridenOpen;
 	});
+	
 	
 	Selectize.define('optgroup_columns', function(options) {
 		var self = this;
