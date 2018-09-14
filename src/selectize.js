@@ -1188,7 +1188,7 @@ $.extend(Selectize.prototype, {
 			if (triggerDropdown && !self.isOpen) { self.open(); }
 		} else {
 			self.setActiveOption(null);
-			if (triggerDropdown && self.isOpen) { self.close(); }
+			if (triggerDropdown && self.isOpen && !self.settings.no_results_text) { self.close(); }
 		}
 	},
 
@@ -1466,8 +1466,9 @@ $.extend(Selectize.prototype, {
 			this.buffer.appendChild(childNodes[i]);
 		}
 
+		var maxItems = this.settings.maxItems ? this.settings.maxItems : Number.MAX_SAFE_INTEGER;
 		var items = $.isArray(values) ? values : [values];
-		for (var i = 0, n = items.length; i < n; i++) {
+		for (var i = 0, n = items.length; i < n && i < maxItems; i++) {
 			this.isPending = (i < n - 1);
 			this.addItem(items[i], silent);
 		}
@@ -1824,7 +1825,7 @@ $.extend(Selectize.prototype, {
             top: offset.top,
         }
 
-		// Custom plugin 
+		// Custom plugin
 		if(this.settings.plugins.indexOf('custom_width') !== -1) {
 			if (this.settings.dropdown_direction && this.settings.dropdown_direction === 'rtl') {
 				position.right = 0;

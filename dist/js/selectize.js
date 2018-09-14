@@ -1679,7 +1679,7 @@
 				if (triggerDropdown && !self.isOpen) { self.open(); }
 			} else {
 				self.setActiveOption(null);
-				if (triggerDropdown && self.isOpen) { self.close(); }
+				if (triggerDropdown && self.isOpen && !self.settings.no_results_text) { self.close(); }
 			}
 		},
 	
@@ -1957,8 +1957,9 @@
 				this.buffer.appendChild(childNodes[i]);
 			}
 	
+			var maxItems = this.settings.maxItems ? this.settings.maxItems : Number.MAX_SAFE_INTEGER;
 			var items = $.isArray(values) ? values : [values];
-			for (var i = 0, n = items.length; i < n; i++) {
+			for (var i = 0, n = items.length; i < n && i < maxItems; i++) {
 				this.isPending = (i < n - 1);
 				this.addItem(items[i], silent);
 			}
@@ -2315,7 +2316,7 @@
 	            top: offset.top,
 	        }
 	
-			// Custom plugin 
+			// Custom plugin
 			if(this.settings.plugins.indexOf('custom_width') !== -1) {
 				if (this.settings.dropdown_direction && this.settings.dropdown_direction === 'rtl') {
 					position.right = 0;
@@ -3086,7 +3087,7 @@
 	
 	Selectize.define('header_items', function (options) {
 	    var self = this;
-	    
+	
 	    options = $.extend({
 	        headerClass: 'selectize-dropdown-header',
 	        html: function (data) {
@@ -3127,7 +3128,7 @@
 	        self.header_items = new Map();
 	        return function () {
 	            original.apply(self, arguments);
-	           
+	
 	            self.$dropdown_header = $(options.html(options));
 	            self.$dropdown.prepend(self.$dropdown_header);
 	
@@ -3251,6 +3252,77 @@
 	            }
 	        };
 	    })();
+	});
+	
+	Selectize.define('no_results_text', function (options) {
+	    var self = this;
+	
+	    options = $.extend({
+	        noResultsTextClass: 'selectize-no-results-text',
+	        noResultsText: self.settings.no_results_text,
+	        html: function (data) {
+	            return (
+	                '<div class="' + data.noResultsTextClass + '">' + data.noResultsText + '</div>'
+	            );
+	        }
+	    }, options);
+	
+	    var showNoResultsText = function (value) {
+	        if (value === undefined) {
+	            value = self.$control_input.val();
+	        }
+	
+	        var query = $.trim(value);
+	        var results = self.search(query);
+	        if (results.items.length || (self.$dropdown_header.children().length && query == '')) {
+	            self.$dropdown_no_results.css('display', 'none');
+	        } else {
+	            self.$dropdown_no_results.css('display', 'block');
+	        }
+	    }
+	
+	    self.setup = (function () {
+	        var original = self.setup;
+	        return function () {
+	            original.apply(self, arguments);
+	
+	            self.$dropdown_no_results = $(options.html(options));
+	            self.$dropdown.append(self.$dropdown_no_results);
+	
+	            self.$dropdown_no_results.css('display', 'none');
+	        };
+	
+	        self.on('item_remove', function () {
+	            showNoResultsText()
+	        });
+	
+	        self.on('item_add', function () {
+	            showNoResultsText()
+	        });
+	
+	        self.on('clear', function () {
+	            showNoResultsText()
+	        });
+	    })();
+	
+	    var overridenOnSearchChange = (function () {
+	        var original = self.onSearchChange;
+	        return function (value) {
+	            original.apply(this, arguments);
+	            showNoResultsText(value);
+	        };
+	    })();
+	
+	    var overridenOpen = (function () {
+	        var original = self.open;
+	        return function () {
+	            original.apply(this, arguments);
+	            showNoResultsText();
+	        };
+	    })();
+	
+	    self.onSearchChange = overridenOnSearchChange;
+	    self.open = overridenOpen;
 	});
 	
 	Selectize.define('optgroup_columns', function(options) {

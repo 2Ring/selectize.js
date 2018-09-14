@@ -1,6 +1,6 @@
 Selectize.define('header_items', function (options) {
     var self = this;
-    
+
     options = $.extend({
         headerClass: 'selectize-dropdown-header',
         html: function (data) {
@@ -41,7 +41,7 @@ Selectize.define('header_items', function (options) {
         self.header_items = new Map();
         return function () {
             original.apply(self, arguments);
-           
+
             self.$dropdown_header = $(options.html(options));
             self.$dropdown.prepend(self.$dropdown_header);
 

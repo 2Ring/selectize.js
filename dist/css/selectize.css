@@ -52,6 +52,12 @@
 .selectize-dropdown-header-close:hover {
   color: #000000;
 }
+.selectize-no-results-text {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  padding: 0 5px 10px 5px;
+}
 .selectize-dropdown.plugin-optgroup_columns .optgroup {
   border-right: 1px solid #f2f2f2;
   border-top: 0 none;
