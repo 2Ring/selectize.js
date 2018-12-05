@@ -1466,7 +1466,7 @@ $.extend(Selectize.prototype, {
 			this.buffer.appendChild(childNodes[i]);
 		}
 
-		var maxItems = this.settings.maxItems ? this.settings.maxItems : Number.MAX_SAFE_INTEGER;
+		var maxItems = this.settings.maxItems ? this.settings.maxItems : Number.MAX_VALUE;
 		var items = $.isArray(values) ? values : [values];
 		for (var i = 0, n = items.length; i < n && i < maxItems; i++) {
 			this.isPending = (i < n - 1);
