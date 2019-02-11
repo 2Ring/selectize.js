@@ -15,6 +15,7 @@
   "version": "0.12.4",
   "author": "Brian Reavis <brian@thirdroute.com>",
   "license": "Apache-2.0",
+  "typings": "selectize.d.ts",
   "repository": {
     "type": "git",
     "url": "git://github.com/selectize/selectize.js.git"
